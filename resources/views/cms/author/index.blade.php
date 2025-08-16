@@ -1,0 +1,139 @@
+@extends('cms.parent')
+
+@section('title' , 'Index Author')
+@section('main-title' , 'Index Author')
+@section('sub-title' , 'index author')
+
+
+@section('styles')
+
+@endsection
+
+
+@section('content')
+<section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="card">
+            <div class="card-header">
+                @can('Create Author')
+                <a href="{{ route('authors.create') }}" type="submit" class="btn btn-info">Add New author</a>
+                @endcan
+                {{--  <a href="{{ route('countries-trashed') }}" type="submit" class="btn btn-danger">Trashed</a>
+                <a href="{{ route('truncate') }}" type="submit" class="btn btn-danger">Delete All</a>  --}}
+
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+              <table class="table table-bordered">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Image</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th> Email</th>
+                    <th> Gender</th>
+                    <th> Status</th>
+                    <th> City Name</th>
+                    {{-- <th> Article</th> --}}
+
+                    <th>Setting</th>
+
+                  </tr>
+                </thead>
+                <tbody>
+
+
+
+                    @forelse ($authors as $author )
+
+                    <tr>
+                        <td>{{ $author->id }}</td>
+                        <td>
+                          <img class="img-circle img-bordered-sm" src="{{asset('storage/images/author/'.$author->user->image)}}" width="50" height="50" alt="User Image">
+                      </td>
+                        <td>{{$author->user->first_name ?? ""}}</td>
+                        <td>{{$author->user->last_name  ?? ""}}</td>
+                        <td>{{$author->email}}</td>
+
+                        {{-- <td><span class="badge bg-success"> {{$author->user->gender  ?? ""}} </span></td> --}}
+                        <td>
+                            @if ($author->user->gender == 'male')
+                                <span class="badge bg-info"> {{ $author->user->gender ?? '' }}
+                                </span>
+                            @else
+                                <span class="badge bg-pink"> {{ $author->user->gender ?? '' }}
+                                </span>
+                            @endif
+                        </td>
+                        {{-- <td><span class="badge bg-success"> {{$author->user->status  ?? ""}} </span></td> --}}
+                        <td>
+                            @if ($author->user->status == 'active')
+                                <span class="badge bg-success"> {{ $author->user->status ?? '' }}
+                                </span>
+                            @else
+                                <span class="badge bg-danger"> {{ $author->user->status ?? '' }}
+                                </span>
+                            @endif
+                        </td>
+                        <td><span class="badge bg-yellow"> {{$author->user->city->name}} </span></td>
+
+                        {{-- <td><a href="{{route('indexArticle',['id'=>$author->id])}}"
+                          class="btn btn-info">({{ $author->articles_count }})
+                          article/s</a> </td> --}}
+                        @canany(['Update Author','Delete Author','Show Author'])
+                        <td>
+
+
+
+                            <div class="btn-group">
+                                @can('Update Author')
+                                <a href="{{ route('authors.edit' , $author->id  ) }}" type="button" class="btn btn-info"><i class="fas fa-edit"></i></a>
+                                @endcan
+                                @can('Delete Author')
+                                <button type="button" onclick="performDestroy({{$author->id  }} , this)" class="btn btn-danger"><i class="fas fa-trash-alt"></i></button>
+                               @endcan
+                                @can('Show Author')
+                                <a href="{{ route('authors.show' , $author->id  ) }}" type="button" class="btn btn-success"><i class="fas fa-eye"></i></a>
+                                @endcan
+                            </div>
+
+
+                        </td>@endcanany
+
+                      </tr>
+                    @empty
+                        <tr>
+                            <td colspan="7" > No Defiend Author  </td>
+                        </tr>
+                    @endforelse
+
+                </tbody>
+              </table>
+            </div>
+            <!-- /.card-body -->
+
+          </div>
+          <!-- /.card -->
+          {{ $authors->links() }}
+          <!-- /.card -->
+        </div>
+
+      </div>
+
+
+      <!-- /.row -->
+    </div><!-- /.container-fluid -->
+  </section>
+@endsection
+
+
+@section('scripts')
+    <script>
+        function performDestroy(id , reference){
+          confirmDestroy('/cms/admin/authors/' + id , reference) ;
+        }
+    </script>
+@endsection
