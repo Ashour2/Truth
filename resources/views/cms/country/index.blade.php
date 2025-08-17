@@ -149,7 +149,7 @@ $(document).ready(function(){
 
                 setTimeout(function(){
                     $("#exampleModal").modal('hide');
-                    history.back();
+                   window.location.href = "{{ route('countries.index') }}";
                 }, 2000);
             },
             error: function(){
