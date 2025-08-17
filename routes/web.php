@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CityController;
@@ -37,5 +38,8 @@ Route::prefix('cms/admin/')->group(function () {
 
     Route::resource('authors', AuthorController::class);
     Route::post("authors-update/{id}", [AuthorController::class, "update"])->name('authors-update');
+
+    Route::resource('admins', AdminController::class);
+    Route::post("admins-update/{id}", [AdminController::class, "update"])->name('admins-update');
 
 });

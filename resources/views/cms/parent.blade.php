@@ -227,14 +227,14 @@
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
                                     {{-- admins.index --}}
-                                    <a href="#" class="nav-link">
+                                    <a href="{{ route('admins.index') }}" class="nav-link">
                                         <i class="fas fa-list-ul nav-icon"></i>
                                         <p>جميع المشرفين</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
                                     {{-- admins.create --}}
-                                    <a href="#" class="nav-link">
+                                    <a href="{{ route('admins.create') }}" class="nav-link">
                                         <i class="fas fa-plus-circle nav-icon"></i>
                                         <p>انشاء مشرف جديد</p>
                                     </a>

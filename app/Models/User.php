@@ -42,4 +42,11 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function city(){
+        return $this->belongsTo(City::class);
+    }
+    public function actor(){
+        return $this->morphTo();
+    }
 }

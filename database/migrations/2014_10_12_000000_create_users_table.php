@@ -22,9 +22,6 @@ return new class extends Migration
             $table->enum("gender", ['male', 'female']);
             $table->enum("status", ['active', 'inactive']);
 
-            // $table->foreignId('city_id');
-            // $table->foreign('city_id')->on('cities')->references('id')->cascadeOnDelete();
-
 
             $table->timestamps();
         });
