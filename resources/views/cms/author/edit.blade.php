@@ -1,7 +1,7 @@
 @extends('cms.parent')
 
-@section('title' , 'Edit Author')
-@section('main-title' , 'Edit Author')
+@section('title' , 'Edit author')
+@section('main-title' , 'Edit author')
 @section('sub-title' , 'Edit author')
 
 
@@ -21,7 +21,7 @@
           <!-- general form elements -->
           <div class="card card-primary">
             <div class="card-header">
-              <h3 class="card-title">Edit New Author</h3>
+              <h3 class="card-title">Add New author</h3>
             </div>
             <!-- /.card-header -->
             <!-- form start -->
@@ -61,7 +61,7 @@
 
                 <div class="form-group">
                   <label for="last_name">Last Name</label>
-                  <input type="text" class="form-control" id="last_name" name="last_name" 
+                  <input type="text" class="form-control" id="last_name" name="last_name"
                   value="{{ $authors->user->last_name }}" placeholder="Enter Last Name of author">
                 </div>
                 </div>
@@ -83,7 +83,7 @@
 
                 <div class="form-group">
                   <label for="mobile">Mobile</label>
-                  <input type="text" class="form-control" id="mobile" name="mobile" 
+                  <input type="text" class="form-control" id="mobile" name="mobile"
                   value="{{ $authors->user->mobile }}" placeholder="Enter Mobile of author">
                 </div>
                 </div>
@@ -96,7 +96,7 @@
 
                 <div class="form-group">
                   <label for="date"> Date of Birth</label>
-                  <input type="date" class="form-control" id="date" name="date" 
+                  <input type="date" class="form-control" id="date" name="date"
                   value="{{ $authors->user->date }}" placeholder="Enter Date of Birth">
                 </div>
                 </div>

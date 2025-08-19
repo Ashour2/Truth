@@ -10,10 +10,17 @@ class CountryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
-        $countries = Country::all();
+        $countries = Country::withCount('cities')->orderBy('id', 'desc');
+        if($request->get('name')){
+            $countries =Country::where('name', 'like', '%' . $request->name . '%') ;
+        }
+        if($request->get('code')){
+            $countries =Country::where('code', 'like', '%' . $request->code . '%') ;
+        }
+
+       $countries =$countries->paginate(10);
         return response()->view('cms.country.index', compact('countries'));
     }
 

@@ -21,47 +21,85 @@
     <link rel="stylesheet" href="{{ asset('cms/plugins/daterangepicker/daterangepicker.css') }}">
     <link rel="stylesheet" href="{{ asset('cms/plugins/summernote/summernote-bs4.min.css') }}">
 
-    <style>
-        /* Light sidebar styles */
-        .main-sidebar.sidebar-dark-primary {
-            background-color: #ffffff !important;
-            border-right: 1px solid #e9ecef;
-            color: #495057; /* Dark text color for general sidebar */
-        }
-        .main-sidebar .nav-header {
-            color: #6c757d !important; /* Lighter header text */
-            font-weight: 600;
-        }
-        .main-sidebar .nav-link {
-            color: #495057 !important;
-        }
-        .main-sidebar .nav-link.active {
-            background-color: #e9ecef !important;
-            color: #007bff !important;
-        }
-        .main-sidebar .nav-link:hover:not(.active) {
-            background-color: #f8f9fa !important;
-            color: #007bff !important;
-        }
-        .main-sidebar .nav-icon {
-            color: #6c757d !important; /* Icon color */
-        }
-        .main-sidebar .nav-link.active .nav-icon {
-            color: #007bff !important;
-        }
-        .brand-link {
-            border-bottom: 1px solid #e9ecef;
-        }
-        .brand-text {
-            color: #343a40 !important;
-            font-weight: bold;
-        }
-        .user-panel .info a {
-            color: #343a40;
-            font-weight: 600;
-        }
+<style>
+    /* Light sidebar styles */
+    .main-sidebar.sidebar-dark-primary {
+        background-color: #f9fafb !important; /* أفتح */
+        border-right: 1px solid #dee2e6;
+        color: #212529;
+    }
+    .main-sidebar .nav-header {
+        color: #6c757d !important;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+    }
+    .main-sidebar .nav-link {
+        color: #495057 !important;
+        transition: all 0.3s ease;
+        border-radius: 8px;
+        margin: 2px 6px;
+    }
+    .main-sidebar .nav-link.active {
+        background-color: #e3f2fd !important; /* أزرق فاتح */
+        color: #0d6efd !important;
+        font-weight: 600;
+    }
+    .main-sidebar .nav-link:hover:not(.active) {
+        background-color: #f1f3f5 !important;
+        color: #0d6efd !important;
+    }
+    .main-sidebar .nav-icon {
+        color: #6c757d !important;
+    }
+    .main-sidebar .nav-link.active .nav-icon,
+    .main-sidebar .nav-link:hover .nav-icon {
+        color: #0d6efd !important;
+    }
+    .brand-link {
+        border-bottom: 1px solid #dee2e6;
+        background: #ffffff;
+    }
+    .brand-text {
+        color: #0d6efd !important;
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+    .user-panel .info a {
+        color: #212529;
+        font-weight: 600;
+    }
 
-    </style>
+    /* تحسين الهيدر */
+    .main-header.navbar {
+        border-bottom: 1px solid #dee2e6;
+        background-color: #ffffff !important;
+    }
+    .main-header .nav-link {
+        color: #495057 !important;
+    }
+    .main-header .nav-link:hover {
+        color: #0d6efd !important;
+    }
+
+    /* البريـد كرومب */
+    .breadcrumb-item a {
+        color: #0d6efd !important;
+    }
+    .breadcrumb-item.active {
+        color: #6c757d !important;
+    }
+
+    /* الفوتر */
+    .main-footer {
+        background: #f8f9fa !important;
+        border-top: 1px solid #dee2e6;
+        color: #495057;
+        font-size: 0.9rem;
+    }
+</style>
+
     @yield('styles')
 </head>
 
@@ -240,7 +278,37 @@
                                     </a>
                                 </li>
                             </ul>
+                            <ul>
+                                <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="nav-icon fas fa-feather-alt" style="color:blue;"></i>
+                                    {{-- <i class="fas fa-feather-alt"></i> --}}
+                                    {{--  <i class="far fa-user"></i>  --}}
+                                    <p style="color: rgb(0, 0, 2)">
+                                        Author
+                                        <i class="fas fa-angle-left right"></i>
+                                    </p>
+                                </a>
+                                <ul class="nav nav-treeview">
+                                    {{-- @can('Index Author') --}}
+                                    <li class="nav-item">
+                                        <a href="{{ route('authors.index') }}" class="nav-link">
+                                            <i class="fas fa-list-ul nav-icon" style="color:blue;"></i>
+                                            {{--  <i class="fas fa-list-ul"></i>  --}}
+                                            <p style="color: rgb(0, 0, 2)">All-Authors</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{{ route('authors.create') }}" class="nav-link">
+                                            <i class="fas fa-plus-circle nav-icon" style="color:blue;"></i>
+                                            {{--  <i class="fas fa-list-ul"></i>  --}}
+                                            <p style="color: rgb(0, 0, 2)">All-Authors</p>
+                                        </a>
+                                    </li>
+                                    {{-- @endcan --}}
+                            </ul>
                         </li>
+
                         <li class="nav-item">
                             <a href="#" class="nav-link">
                                 <i class="nav-icon fas fa-user"></i>
@@ -331,6 +399,29 @@
                                 </li>
                                 <li class="nav-item">
                                     <a href="{{ route('categories.create') }}" class="nav-link">
+                                        <i class="fas fa-plus-circle nav-icon"></i>
+                                        <p>Create</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fas fa-newspaper"></i>
+                                <p>
+                                    Articles
+                                    <i class="fas fa-angle-left right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ route('articles.index') }}" class="nav-link">
+                                        <i class="fas fa-list-ul nav-icon"></i>
+                                        <p>All Articles</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('articles.create') }}" class="nav-link">
                                         <i class="fas fa-plus-circle nav-icon"></i>
                                         <p>Create</p>
                                     </a>

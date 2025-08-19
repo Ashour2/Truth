@@ -1,100 +1,131 @@
 @extends('cms.parent')
 
-@section('title' , 'Show Author')
-@section('main-title' , 'Show Author Profile ')
-@section('sub-title' , 'Author Profile')
-
+@section('title', 'Show author')
+@section('main-title', 'author Profile')
+@section('sub-title', 'author Personal Information')
 
 @section('styles')
-
-
+<style>
+    .profile-card {
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 6px 25px rgba(0, 0, 0, 0.1);
+        transition: 0.3s;
+    }
+    .profile-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 35px rgba(0, 0, 0, 0.15);
+    }
+    .profile-header {
+        background: linear-gradient(135deg, #007bff, #0056b3);
+        padding: 30px;
+        text-align: center;
+        color: #fff;
+    }
+    .profile-header img {
+        border-radius: 50%;
+        border: 4px solid #fff;
+        margin-bottom: 15px;
+    }
+    .profile-body {
+        padding: 30px;
+    }
+    .profile-body .form-control {
+        background: #f9f9f9;
+        border: none;
+        border-radius: 10px;
+        box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.05);
+    }
+    .profile-body label {
+        font-weight: 600;
+        color: #444;
+    }
+    .card-footer {
+        background: #fafafa;
+        border-top: none;
+        text-align: center;
+        padding: 20px;
+    }
+</style>
 @endsection
-
 
 @section('content')
+<div class="row justify-content-center">
+    <div class="col-md-8">
 
+        <div class="card profile-card">
+            <!-- Header -->
+            <div class="profile-header">
+                <img src="{{ asset('storage/images/author/' . $authors->user->image) }}"
+                     alt="User Image" width="120" height="120">
+                <h3 class="mb-0">{{ $authors->user->first_name.' '.$authors->user->last_name }}</h3>
+                <p class="mb-0 text-light">{{ $authors->user->city->name }}</p>
+            </div>
 
-<form>
-    <div class="card-body">
-        <div class="form-group">
-            <label for="image">{{ $authors->user->first_name.' '.$authors->user->last_name }}</label>
-            <img
-                src="{{ asset('storage/images/author/' . $authors->user->image) }}"
-                value="{{ $authors->user->image }}" disabled width="100" height="100"
-                alt="User Image">
+            <!-- Body -->
+            <div class="profile-body">
+                <form>
+                    <div class="form-group mb-3">
+                        <label>First Name</label>
+                        <input type="text" class="form-control" disabled
+                               value="{{ $authors->user->first_name }}">
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label>Last Name</label>
+                        <input type="text" class="form-control" disabled
+                               value="{{ $authors->user->last_name }}">
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label>Mobile</label>
+                        <input type="text" class="form-control" disabled
+                               value="{{ $authors->user->mobile }}">
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label>Address</label>
+                        <input type="text" class="form-control" disabled
+                               value="{{ $authors->user->address }}">
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label>Date</label>
+                        <input type="date" class="form-control" disabled
+                               value="{{ $authors->user->date }}">
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label>Gender</label>
+                        <input type="text" class="form-control" disabled
+                               value="{{ $authors->user->gender }}">
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label>Status</label>
+                        <input type="text" class="form-control" disabled
+                               value="{{ $authors->user->status }}">
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label>City</label>
+                        <input type="text" class="form-control" disabled
+                               value="{{ $authors->user->city->name }}">
+                    </div>
+                </form>
+            </div>
+
+            <!-- Footer -->
+            <div class="card-footer">
+                <a href="{{ route('authors.index') }}" class="btn btn-info px-4">
+                    <i class="fas fa-arrow-left"></i> Back to List
+                </a>
+            </div>
         </div>
-        {{-- <div>
-            <h6> To Add new Article Click Here 👉
-            <a href="{{route('indexArticle',['id'=>$authors->id])}}"
-            class="btn btn-info">({{ $authors->articles_count }})
-            article/s</a></h6></div> --}}
-        {{-- class="img-circle img-bordered-sm" --}}
 
     </div>
-    <!-- /.card-body -->
-
-  </form>
-<section class="content">
-    <div class="container-fluid">
-      <div class="row">
-        <!-- left column -->
-        <div class="col-md-12">
-          <!-- general form elements -->
-          <div class="card card-primary">
-            <div class="card-header">
-
-
-              <h3 class="card-title">author({{ $authors->user->first_name.' '.$authors->user->last_name }})Profile</h3>
-            </div>
-            <!-- /.card-header -->
-            <!-- form start -->
-            <form>
-              <div class="card-body">
-                <div class="form-group">
-                  <label for="first_name">first Name</label>
-                  <input type="text" class="form-control" disabled id="first_name" name="first_name"
-                  value="{{ $authors->user->first_name }}" placeholder="f-Name of author">
-                </div>
-                <div class="form-group">
-                  <label for="last_name">last_name</label>
-                  <input type="text" class="form-control" disabled id="last_name" name="last_name"
-                  value="{{ $authors->user->last_name }}" placeholder="last_name of author">
-                </div>
-
-                <div class="form-group">
-                  <label for="city_id">city name</label>
-                  <input type="text" class="form-control" disabled id="city_id" name="city_id"
-                  value="{{ $authors->user->city->name }}" placeholder="name of city">
-                </div>
-
-              </div>
-              <!-- /.card-body -->
-
-              <div class="card-footer">
-
-                <a href="{{ route('authors.index') }}" type="submit" class="btn btn-info"> <i class="fas fa-backward"></i>  Go Back</a>
-
-              </div>
-            </form>
-          </div>
-          <!-- /.card -->
-
-
-          <!-- /.card -->
-
-        </div>
-        <!--/.col (left) -->
-
-      </div>
-      <!-- /.row -->
-    </div><!-- /.container-fluid -->
-  </section>
-
-
-
+</div>
 @endsection
 
-
 @section('scripts')
-
 @endsection
