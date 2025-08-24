@@ -13,7 +13,17 @@ class CountrySeeder extends Seeder
      */
     public function run(): void
     {
-        //
-        Country::factory(10)->create();
+       $countries = [
+            ['name' => 'Palestine', 'code' => 'PS'],
+            ['name' => 'Egypt', 'code' => 'EG'],
+            ['name' => 'Jordan', 'code' => 'JO'],
+            ['name' => 'Saudi Arabia', 'code' => 'SA'],
+            ['name' => 'United States', 'code' => 'US'],
+            // أضف المزيد حسب الحاجة
+        ];
+
+        foreach ($countries as $country) {
+            Country::create($country);
+        }
     }
 }

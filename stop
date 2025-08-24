@@ -1,0 +1,543 @@
+[33mcommit 55964e0898216737a1b2052a39139da19068495a[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m
+Author: Ashour2 <113200430+Ashour2@users.noreply.github.com>
+Date:   Tue Aug 19 14:02:22 2025 +0300
+
+    authentocation
+
+[1mdiff --git a/app/Http/Controllers/ArticleController.php b/app/Http/Controllers/ArticleController.php[m
+[1mnew file mode 100644[m
+[1mindex 0000000..e568b48[m
+[1m--- /dev/null[m
+[1m+++ b/app/Http/Controllers/ArticleController.php[m
+[36m@@ -0,0 +1,183 @@[m
+[32m+[m[32m<?php[m
+[32m+[m
+[32m+[m[32mnamespace App\Http\Controllers;[m
+[32m+[m
+[32m+[m[32muse App\Models\Article;[m
+[32m+[m[32muse App\Models\Category;[m
+[32m+[m[32muse App\Models\Author;[m
+[32m+[m[32muse Illuminate\Http\Request;[m
+[32m+[m
+[32m+[m[32mclass ArticleController extends Controller[m
+[32m+[m[32m{[m
+[32m+[m[32m    /**[m
+[32m+[m[32m     * Display a listing of articles by author.[m
+[32m+[m[32m     */[m
+[32m+[m[32m    public function indexArticle($id)[m
+[32m+[m[32m    {[m
+[32m+[m[32m        $authors = Author::findOrFail($id);[m
+[32m+[m[32m        $articles = Article::where('author_id', $id)[m
+[32m+[m[32m            ->orderBy('created_at', 'desc')[m
+[32m+[m[32m            ->paginate(5);[m
+[32m+[m
+[32m+[m[32m        return view('cms.article.index', compact('articles', 'authors', 'id'));[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    /**[m
+[32m+[m[32m     * Show the form for creating a new article (with specific author).[m
+[32m+[m[32m     */[m
+[32m+[m[32m    public function createArticle($id)[m
+[32m+[m[32m    {[m
+[32m+[m[32m        $categories = Category::where('status', 'active')->get();[m
+[32m+[m[32m        $authors = Author::all();[m
+[32m+[m
+[32m+[m[32m        return view('cms.article.create', compact('categories', 'authors', 'id'));[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    /**[m
+[32m+[m[32m     * Display all articles.[m
+[32m+[m[32m     */[m
+[32m+[m[32m        public function index(Request $request)[m
+[32m+[m[32m    {[m
+[32m+[m[32m        $articles = Article::orderBy('id', 'desc');[m
+[32m+[m[32m        if($request->get('title')){[m
+[32m+[m[32m            $articles =Article::where('title', 'like', '%' . $request->title . '%') ;[m
+[32m+[m[32m        }[m
+[32m+[m[32m        if($request->get('short_description')){[m
+[32m+[m[32m            $articles =Article::where('short_description', 'like', '%' . $request->short_description . '%') ;[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m       $articles =$articles->paginate(10);[m
+[32m+[m[32m        return response()->view('cms.article.indexALl', compact('articles'));[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    // public function index()[m
+[32m+[m[32m    // {[m
+[32m+[m[32m    //     $articles = Article::orderBy('id', 'desc')->paginate(10);[m
+[32m+[m[32m    //     return view('cms.article.indexAll', compact('articles'));[m
+[32m+[m[32m    // }[m
+[32m+[m
+[32m+[m[32m    /**[m
+[32m+[m[32m     * Show the form for creating a new article.[m
+[32m+[m[32m     */[m
+[32m+[m[32m    public function create()[m
+[32m+[m[32m    {[m
+[32m+[m[32m        $categories = Category::where('status', 'active')->get();[m
+[32m+[m[32m        $authors = Author::all();[m
+[32m+[m
+[32m+[m[32m        return view('cms.article.create', compact('categories', 'authors'));[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    /**[m
+[32m+[m[32m     * Store a newly created article.[m
+[32m+[m[32m     */[m
+[32m+[m[32m    public function store(Request $request)[m
+[32m+[m[32m    {[m
+[32m+[m[32m        $validator = Validator($request->all(), [[m
+[32m+[m[32m            'title' => 'required',[m
+[32m+[m[32m            'category_id' => 'required|exists:categories,id',[m
+[32m+[m[32m            'author_id' => 'required|exists:authors,id',[m
+[32m+[m[32m        ]);[m
+[32m+[m
+[32m+[m[32m        if ($validator->fails()) {[m
+[32m+[m[32m            return response()->json([[m
+[32m+[m[32m                'icon' => 'error',[m
+[32m+[m[32m                'title' => $validator->errors()->first()[m
+[32m+[m[32m            ], 400);[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m        $article = new Article();[m
+[32m+[m[32m        $article->title = $request->title;[m
+[32m+[m[32m        $article->short_description = $request->short_description;[m
+[32m+[m[32m        $article->full_description = $request->full_description;[m
+[32m+[m[32m        $article->category_id = $request->category_id;[m
+[32m+[m[32m        $article->author_id = $request->author_id;[m
+[32m+[m
+[32m+[m[32m        if ($request->hasFile('image')) {[m
+[32m+[m[32m            $image = $request->file('image');[m
+[32m+[m[32m            $imageName = time() . 'image.' . $image->getClientOriginalExtension();[m
+[32m+[m[32m            $image->move('storage/images/article', $imageName);[m
+[32m+[m[32m            $article->image = $imageName;[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m        $article->save();[m
+[32m+[m
+[32m+[m[32m        return response()->json([[m
+[32m+[m[32m            'icon' => 'success',[m
+[32m+[m[32m            'title' => 'Created successfully'[m
+[32m+[m[32m        ], 200);[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    /**[m
+[32m+[m[32m     * Display the specified article.[m
+[32m+[m[32m     */[m
+[32m+[m[32m    public function show($id)[m
+[32m+[m[32m    {[m
+[32m+[m[32m        $articles = Article::findOrFail($id);[m
+[32m+[m[32m        return view('cms.article.show', compact('articles'));[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    /**[m
+[32m+[m[32m     * Show the form for editing the specified article.[m
+[32m+[m[32m     */[m
+[32m+[m[32m    public function edit($id)[m
+[32m+[m[32m    {[m
+[32m+[m[32m        $categories = Category::where('status', 'active')->get();[m
+[32m+[m[32m        $authors = Author::all();[m
+[32m+[m[32m        $articles = Article::findOrFail($id);[m
+[32m+[m
+[32m+[m[32m        return view('cms.article.edit', compact('categories', 'authors', 'articles'));[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    /**[m
+[32m+[m[32m     * Update the specified article.[m
+[32m+[m[32m     */[m
+[32m+[m[32m    public function update(Request $request, $id)[m
+[32m+[m[32m    {[m
+[32m+[m[32m        $validator = Validator($request->all(), [[m
+[32m+[m[32m            'title' => 'required',[m
+[32m+[m[32m            'category_id' => 'required|exists:categories,id',[m
+[32m+[m[32m            'author_id' => 'required|exists:authors,id',[m
+[32m+[m[32m        ]);[m
+[32m+[m
+[32m+[m[32m        if ($validator->fails()) {[m
+[32m+[m[32m            return response()->json([[m
+[32m+[m[32m                'icon' => 'error',[m
+[32m+[m[32m                'title' => $validator->errors()->first()[m
+[32m+[m[32m            ], 400);[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m        $article = Article::findOrFail($id);[m
+[32m+[m[32m        $article->title = $request->title;[m
+[32m+[m[32m        $article->short_description = $request->short_description;[m
+[32m+[m[32m        $article->full_description = $request->full_description;[m
+[32m+[m[32m        $article->category_id = $request->category_id;[m
+[32m+[m[32m        $article->author_id = $request->author_id;[m
+[32m+[m
+[32m+[m[32m        if ($request->hasFile('image')) {[m
+[32m+[m[32m            $image = $request->file('image');[m
+[32m+[m[32m            $imageName = time() . 'image.' . $image->getClientOriginalExtension();[m
+[32m+[m[32m            $image->move('storage/images/article', $imageName);[m
+[32m+[m[32m            $article->image = $imageName;[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m        $article->save();[m
+[32m+[m
+[32m+[m[32m        return response()->json([[m
+[32m+[m[32m            'icon' => 'success',[m
+[32m+[m[32m            'title' => 'Updated successfully',[m
+[32m+[m[32m            'redirect' => route('articles.index')[m
+[32m+[m[32m        ], 200);[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    /**[m
+[32m+[m[32m     * Remove the specified article.[m
+[32m+[m[32m     */[m
+[32m+[m[32m    public function destroy($id)[m
+[32m+[m[32m    {[m
+[32m+[m[32m        Article::destroy($id);[m
+[32m+[m[32m        return response()->json([[m
+[32m+[m[32m            'icon' => 'success',[m
+[32m+[m[32m            'title' => 'Deleted successfully'[m
+[32m+[m[32m        ], 200);[m
+[32m+[m[32m    }[m
+[32m+[m[32m}[m
+[1mdiff --git a/app/Http/Controllers/AuthorController.php b/app/Http/Controllers/AuthorController.php[m
+[1mindex d30f44f..1ef9da7 100644[m
+[1m--- a/app/Http/Controllers/AuthorController.php[m
+[1m+++ b/app/Http/Controllers/AuthorController.php[m
+[36m@@ -2,7 +2,12 @@[m
+ [m
+ namespace App\Http\Controllers;[m
+ [m
+[32m+[m[32muse App\Models\Author;[m
+[32m+[m[32muse App\Models\City;[m
+[32m+[m[32muse App\Models\User;[m
+[32m+[m[32muse Illuminate\Support\Facades\Validator;[m
+ use Illuminate\Http\Request;[m
+[32m+[m[32muse Illuminate\Support\Facades\Hash;[m
+ [m
+ class AuthorController extends Controller[m
+ {[m
+[36m@@ -12,6 +17,9 @@[m [mclass AuthorController extends Controller[m
+     public function index()[m
+     {[m
+         //[m
+[32m+[m[32m        $authors = Author::withCount('articles')->orderBy('id', 'desc')[m
+[32m+[m[32m            ->paginate(10);[m
+[32m+[m[32m        return response()->view('cms.author.index', compact('authors'));[m
+     }[m
+ [m
+     /**[m
+[36m@@ -20,6 +28,11 @@[m [mpublic function index()[m
+     public function create()[m
+     {[m
+         //[m
+[32m+[m
+[32m+[m[32m        $cities = City::all();[m
+[32m+[m[32m        // $roles=Role::where('guard_name','author')->get();[m
+[32m+[m[32m        return response()->view('cms.author.create', compact('cities')); //,'roles'[m
+[32m+[m
+     }[m
+ [m
+     /**[m
+[36m@@ -27,7 +40,75 @@[m [mpublic function create()[m
+      */[m
+     public function store(Request $request)[m
+     {[m
+[31m-        //[m
+[32m+[m[32m        // 🔹 1. قواعد التحقق[m
+[32m+[m[32m        $validator = Validator::make($request->all(), [[m
+[32m+[m[32m            'first_name' => 'required|string|min:3|max:50',[m
+[32m+[m[32m            'last_name'  => 'required|string|min:3|max:50',[m
+[32m+[m[32m            'email'      => 'required|email|unique:authors,email',[m
+[32m+[m[32m            'password'   => 'required|string|',[m
+[32m+[m[32m            'mobile'     => 'required|string|',[m
+[32m+[m[32m            'address'     => 'required|string|',[m
+[32m+[m[32m            'date'       => 'required|date',[m
+[32m+[m[32m            'gender'     => 'required|in:male,female',[m
+[32m+[m[32m            'status'     => 'required|in:active,inactive',[m
+[32m+[m[32m            'city_id'    => 'required|exists:cities,id',[m
+[32m+[m[32m            'image'      => 'nullable|image|mimes:jpg,jpeg,png|max:2048',[m
+[32m+[m[32m            // 'role_id' => 'required|exists:roles,id', // اذا بدك تفعّل الدور[m
+[32m+[m[32m        ]);[m
+[32m+[m
+[32m+[m[32m        // 🔹 2. رجوع إذا في خطأ فالديشن[m
+[32m+[m[32m        if ($validator->fails()) {[m
+[32m+[m[32m            return response()->json([[m
+[32m+[m[32m                'icon'  => 'error',[m
+[32m+[m[32m                'title' => $validator->errors()->first(),[m
+[32m+[m[32m            ], 400);[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m        // 🔹 3. إنشاء author[m
+[32m+[m[32m        $author = new Author();[m
+[32m+[m[32m        $author->email    = $request->get('email');[m
+[32m+[m[32m        $author->password = Hash::make($request->get('password'));[m
+[32m+[m[32m        $isSavedAuthor = $author->save();[m
+[32m+[m
+[32m+[m[32m        if ($isSavedAuthor) {[m
+[32m+[m[32m            // 🔹 4. إنشاء user مربوط بـ author[m
+[32m+[m[32m            $user = new User();[m
+[32m+[m
+[32m+[m[32m            // رفع الصورة إذا موجودة[m
+[32m+[m[32m            if ($request->hasFile('image')) {[m
+[32m+[m[32m                $image     = $request->file('image');[m
+[32m+[m[32m                $imageName = time() . '_author.' . $image->getClientOriginalExtension();[m
+[32m+[m[32m                $image->move(public_path('storage/images/author'), $imageName);[m
+[32m+[m[32m                $user->image = $imageName;[m
+[32m+[m[32m            }[m
+[32m+[m
+[32m+[m[32m            // بيانات المستخدم[m
+[32m+[m[32m            $user->first_name = $request->get('first_name');[m
+[32m+[m[32m            $user->last_name  = $request->get('last_name');[m
+[32m+[m[32m            $user->mobile     = $request->get('mobile');[m
+[32m+[m[32m            $user->address     = $request->get('address');[m
+[32m+[m[32m            $user->date       = $request->get('date');[m
+[32m+[m[32m            $user->gender     = $request->get('gender');[m
+[32m+[m[32m            $user->status     = $request->get('status');[m
+[32m+[m[32m            $user->city_id    = $request->get('city_id');[m
+[32m+[m
+[32m+[m[32m            // ربطه مع author (علاقة polymorphic)[m
+[32m+[m[32m            $user->actor()->associate($author);[m
+[32m+[m
+[32m+[m[32m            $user->save();[m
+[32m+[m
+[32m+[m[32m            // 🔹 5. نجاح العملية[m
+[32m+[m[32m            return response()->json([[m
+[32m+[m[32m                'icon'  => 'success',[m
+[32m+[m[32m                'title' => "Author created successfully",[m
+[32m+[m[32m            ], 200);[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m        // 🔹 6. فشل غير متوقع[m
+[32m+[m[32m        return response()->json([[m
+[32m+[m[32m            'icon'  => 'error',[m
+[32m+[m[32m            'title' => "Something went wrong, please try again",[m
+[32m+[m[32m        ], 500);[m
+     }[m
+ [m
+     /**[m
+[36m@@ -36,6 +117,9 @@[m [mpublic function store(Request $request)[m
+     public function show(string $id)[m
+     {[m
+         //[m
+[32m+[m
+[32m+[m[32m        $authors = Author::find($id);[m
+[32m+[m[32m        return response()->view('cms.author.show', compact('authors'));[m
+     }[m
+ [m
+     /**[m
+[36m@@ -44,6 +128,10 @@[m [mpublic function show(string $id)[m
+     public function edit(string $id)[m
+     {[m
+         //[m
+[32m+[m
+[32m+[m[32m        $cities = City::all();[m
+[32m+[m[32m        $authors = Author::findOrFail($id);[m
+[32m+[m[32m        return response()->view('cms.author.edit', compact('cities', 'authors'));[m
+     }[m
+ [m
+     /**[m
+[36m@@ -52,6 +140,53 @@[m [mpublic function edit(string $id)[m
+     public function update(Request $request, string $id)[m
+     {[m
+         //[m
+[32m+[m[32m        $validator = Validator($request->all(), [[m
+[32m+[m
+[32m+[m[32m            'email' => 'unique:authors,email'[m
+[32m+[m[32m        ], [[m
+[32m+[m[32m            'email.unique' => 'البريد الإلكتروني موجود مسبقًا، الرجاء المحاولة مرة أخرى'[m
+[32m+[m[32m        ]);[m
+[32m+[m
+[32m+[m[32m        if (! $validator->fails()) {[m
+[32m+[m
+[32m+[m[32m            $authors = Author::findOrFail($id);[m
+[32m+[m[32m            $authors->email = $request->get('email');[m
+[32m+[m
+[32m+[m[32m            $isUpdated = $authors->save();[m
+[32m+[m
+[32m+[m[32m            if ($isUpdated) {[m
+[32m+[m[32m                $users = $authors->user;[m
+[32m+[m
+[32m+[m[32m                if (request()->hasFile('image')) {[m
+[32m+[m
+[32m+[m[32m                    $image = $request->file('image');[m
+[32m+[m
+[32m+[m[32m                    $imageName = time() . 'image.' . $image->getClientOriginalExtension();[m
+[32m+[m
+[32m+[m[32m                    $image->move('storage/images/author', $imageName);[m
+[32m+[m[32m                    // $image->storeAs('storage/images/author', $imageName);[m
+[32m+[m
+[32m+[m[32m                    $users->image = $imageName;[m
+[32m+[m[32m                }[m
+[32m+[m
+[32m+[m[32m                $users->first_name = $request->get('first_name');[m
+[32m+[m[32m                $users->last_name = $request->get('last_name');[m
+[32m+[m[32m                $users->mobile = $request->get('mobile');[m
+[32m+[m[32m                $users->date = $request->get('date');[m
+[32m+[m[32m                $users->gender = $request->get('gender');[m
+[32m+[m[32m                $users->status = $request->get('status');[m
+[32m+[m[32m                $users->city_id = $request->get('city_id');[m
+[32m+[m[32m                $users->actor()->associate($authors);[m
+[32m+[m[32m                $isSaved = $users->save();[m
+[32m+[m
+[32m+[m[32m                return ['redirect' => route('authors.index')];[m
+[32m+[m[32m            }[m
+[32m+[m[32m        } else {[m
+[32m+[m[32m            return response()->json([[m
+[32m+[m[32m                'icon' => 'error',[m
+[32m+[m[32m                'title' => $validator->getMessageBag()->first(),[m
+[32m+[m[32m            ], 400);[m
+[32m+[m[32m        }[m
+     }[m
+ [m
+     /**[m
+[36m@@ -60,5 +195,6 @@[m [mpublic function update(Request $request, string $id)[m
+     public function destroy(string $id)[m
+     {[m
+         //[m
+[32m+[m[32m        $authors = Author::destroy($id);[m
+     }[m
+ }[m
+[1mdiff --git a/app/Http/Controllers/CountryController.php b/app/Http/Controllers/CountryController.php[m
+[1mindex a60ed15..a24b1dc 100644[m
+[1m--- a/app/Http/Controllers/CountryController.php[m
+[1m+++ b/app/Http/Controllers/CountryController.php[m
+[36m@@ -10,10 +10,17 @@[m [mclass CountryController extends Controller[m
+     /**[m
+      * Display a listing of the resource.[m
+      */[m
+[31m-    public function index()[m
+[32m+[m[32m    public function index(Request $request)[m
+     {[m
+[31m-        //[m
+[31m-        $countries = Country::all();[m
+[32m+[m[32m        $countries = Country::withCount('cities')->orderBy('id', 'desc');[m
+[32m+[m[32m        if($request->get('name')){[m
+[32m+[m[32m            $countries =Country::where('name', 'like', '%' . $request->name . '%') ;[m
+[32m+[m[32m        }[m
+[32m+[m[32m        if($request->get('code')){[m
+[32m+[m[32m            $countries =Country::where('code', 'like', '%' . $request->code . '%') ;[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m       $countries =$countries->paginate(10);[m
+         return response()->view('cms.country.index', compact('countries'));[m
+     }[m
+ [m
+[1mdiff --git a/app/Http/Controllers/UserAuthController.php b/app/Http/Controllers/UserAuthController.php[m
+[1mnew file mode 100644[m
+[1mindex 0000000..4cc8881[m
+[1m--- /dev/null[m
+[1m+++ b/app/Http/Controllers/UserAuthController.php[m
+[36m@@ -0,0 +1,189 @@[m
+[32m+[m[32m<?php[m
+[32m+[m
+[32m+[m[32mnamespace App\Http\Controllers;[m
+[32m+[m
+[32m+[m[32muse App\Models\Admin;[m
+[32m+[m[32muse App\Models\Author;[m
+[32m+[m[32muse App\Models\City;[m
+[32m+[m[32muse App\Models\User;[m
+[32m+[m[32muse Illuminate\Http\Request;[m
+[32m+[m[32muse Illuminate\Support\Facades\Auth;[m
+[32m+[m[32muse Illuminate\Support\Facades\Hash;[m
+[32m+[m[32muse Illuminate\Support\Facades\Validator;[m
+[32m+[m
+[32m+[m[32mclass UserAuthController extends Controller[m
+[32m+[m[32m{[m
+[32m+[m
+[32m+[m
+[32m+[m[32m    public function showLogin($guard)[m
+[32m+[m[32m    {[m
+[32m+[m[32m        return response()->view('cms.auth.login', compact('guard'));[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    public function loginType()[m
+[32m+[m[32m    {[m
+[32m+[m[32m        return response()->view('cms.auth.loginType');[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    public function login(Request $request)[m
+[32m+[m[32m    {[m
+[32m+[m[32m        $validator = Validator($request->all(), [[m
+[32m+[m[32m            'email' => 'required|email|string',[m
+[32m+[m[32m            'password' => 'required|min:6'[m
+[32m+[m[32m        ]);[m
+[32m+[m
+[32m+[m[32m        $credentials = [[m
+[32m+[m[32m            'email' => $request->get('email'),[m
+[32m+[m[32m            'password' => $request->get('password'),[m
+[32m+[m
+[32m+[m[32m        ];[m
+[32m+[m
+[32m+[m[32m        if (!$validator->fails()) {[m
+[32m+[m[32m            if (Auth::guard($request->get('guard'))->attempt($credentials)) {[m
+[32m+[m[32m                return response()->json([[m
+[32m+[m[32m                    'icon' => 'success',[m
+[32m+[m[32m                    'title' => 'Login IS Successfully'[m
+[32m+[m[32m                ], 200);[m
+[32m+[m[32m            } else {[m
+[32m+[m[32m                return response()->json([[m
+[32m+[m[32m                    'icon' => 'error',[m
+[32m+[m[32m                    'title' => 'Login is Failed'[m
+[32m+[m[32m                ], 400);[m
+[32m+[m[32m            }[m
+[32m+[m[32m        } else {[m
+[32m+[m[32m            return response()->json([[m
+[32m+[m[32m                'icon' => 'error',[m
+[32m+[m[32m                'title' => $validator->getMessageBag()->first(),[m
+[32m+[m[32m            ], 400);[m
+[32m+[m[32m        }[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    public function logout(Request $request)[m
+[32m+[m[32m    {[m
+[32m+[m[32m        $guard = auth('admin')->check() ? 'admin' : 'author';[m
+[32m+[m[32m        Auth::guard($guard)->logout();[m
+[32m+[m[32m        $request->session()->invalidate();[m
+[32m+[m[32m    }[m
+[32m+[m[32m    public function changePassword(Request $request)[m
+[32m+[m[32m    {[m
+[32m+[m[32m        return response()->view('cms.admin.changePassword');[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    public function updatePassword(Request $request){[m
+[32m+[m[32m       $guard=auth('admin')->check() ? 'admin' : 'author' ;[m
+[32m+[m[32m        $validator=Validator($request->all(),[[m
+[32m+[m[32m         'current_password'=>'required'.$guard,[m
+[32m+[m[32m         'new_password'=>'required|confirmed',[m
+[32m+[m[32m         'new_password_confirmation'=>'required|string',[m
+[32m+[m
+[32m+[m[32m        ],[[m
+[32m+[m
+[32m+[m[32m        ]);[m
+[32m+[m[32m        if(!$validator->fails()){[m
+[32m+[m[32m            $user=auth($guard)->user();[m
+[32m+[m[32m            $user->password=Hash::make($request->get('new_password'));[m
+[32m+[m
+[32m+[m[32m            $isSaved=$user->save();[m
+[32m+[m
+[32m+[m[32m            return response()->json([[m
+[32m+[m[32m                'icon'=> $isSaved ? 'success' : 'error',[m
+[32m+[m[32m                'title'=> $isSaved ? 'success' : 'error'[m
+[32m+[m[32m            ],$isSaved ? 200 : 400);[m
+[32m+[m[32m        }else{[m
+[32m+[m[32m            return response()->json([[m
+[32m+[m[32m            'icon'=>'error',[m
+[32m+[m[32m            'title'=>$validator->getMessageBag()->first()[m
+[32m+[m[32m            ]);[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    public function editProfile(Request $request)[m
+[32m+[m[32m    {[m
+[32m+[m[32m        if(Auth::guard('admin')->id()){[m
+[32m+[m[32m            $cities = City::all();[m
+[32m+[m[32m        $admins = Admin::findOrFail(Auth::guard('admin')->id());[m
+[32m+[m[32m        return response()->view('cms.admin.edit' , compact('cities' , 'admins'));[m
+[32m+[m
+[32m+[m[32m        }elseif(Auth::guard('author')->id()){[m
+[32m+[m[32m            $cities = City::all();[m
+[32m+[m[32m        $authors = Author::findOrFail(Auth::guard('author')->id());[m
+[32m+[m[32m        return response()->view('cms.author.edit' , compact('cities' , 'authors'));[m
+[32m+[m
+[32m+[m[32m        }[m
+[32m+[m
+[32m+[m[32m            }[m
+[32m+[m
+[32m+[m[32m    public function updateProfile(Request $request)[m
+[32m+[m[32m    {[m
+[32m+[m[32m        $va

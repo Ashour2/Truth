@@ -13,7 +13,17 @@ class CitySeeder extends Seeder
      */
     public function run(): void
     {
-        //
-        City::factory(15)->create();
+        $cities = [
+            ['name' => 'Gaza City', 'street' => 'Al-Rimal', 'country_id' => 1],
+            ['name' => 'Ramallah', 'street' => 'Al-Masyoun', 'country_id' => 1],
+            ['name' => 'Jerusalem', 'street' => 'Al-Quds Street', 'country_id' => 1],
+            ['name' => 'Cairo', 'street' => 'Nasr City', 'country_id' => 2],
+            ['name' => 'Amman', 'street' => 'Abdoun', 'country_id' => 3],
+            // أضف المزيد حسب الحاجة
+        ];
+
+        foreach ($cities as $city) {
+            City::create($city);
+        }
     }
 }

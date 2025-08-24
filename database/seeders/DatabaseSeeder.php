@@ -18,5 +18,12 @@ class DatabaseSeeder extends Seeder
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',
         // ]);
+
+               $this->call([
+            RoleSeeder::class,       // أول شي ننشئ الرولات والبرميشنز
+            CountrySeeder::class,    // بعدين الدول
+            CitySeeder::class,       // بعد الدول نضيف المدن المرتبطة بالدولة
+            AdminSeeder::class,      // وأخيراً ننشئ الأدمن المرتبط بالمدينة
+        ]);
     }
 }

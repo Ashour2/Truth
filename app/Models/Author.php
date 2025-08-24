@@ -5,11 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-
+use Spatie\Permission\Traits\HasRoles;
 
 class Author extends Authenticatable
 {
-    use HasFactory;
+    use HasFactory,HasRoles;
 
     public function user()
     {
@@ -19,4 +19,5 @@ class Author extends Authenticatable
 
         return $this->hasMany(Article::class)->orderBy('created_at' , 'desc')->take(3);
     }
+     protected $guard_name = 'author';
 }
