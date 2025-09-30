@@ -105,5 +105,8 @@ class CommentController extends Controller
     public function destroy($id)
     {
         //
+        $comments = Comment::destroy($id);
+        return response()->json(['icon' => 'success', 'title' => 'Deleted is successfully'], 200);
+
     }
 }

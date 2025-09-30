@@ -9,10 +9,18 @@ class City extends Model
 {
     use HasFactory;
 
-    public function country(){
+    public function country()
+    {
         return $this->belongsTo(Country::class);
     }
-    public function users(){
+    public function users()
+    {
         return $this->hasMany(User::class);
     }
+    protected $hidden = [
+        "created_at",
+
+        "updated_at",
+
+    ];
 }

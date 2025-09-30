@@ -118,18 +118,22 @@
 
                                                 </td> --}}
                                                 <td class="action-btns">
+                                                    @can('Edit Admin')
                                                     <a href="{{ route('admins.edit', $admin->id) }}"
                                                         class="btn btn-info btn-sm">
                                                         <i class="fas fa-edit"></i> Edit
                                                     </a>
+                                                    @endcan
                                                     <a href="{{ route('admins.show', $admin->id) }}"
                                                         class="btn btn-secondary btn-sm">
                                                         <i class="fas fa-eye"></i> View
                                                     </a>
+                                                    @can('Delete Admin')
                                                     <button onclick="performDestroy({{ $admin->id }},this)"
                                                         class="btn btn-danger btn-sm">
                                                         <i class="fas fa-trash-alt"></i> Delete
                                                     </button>
+                                                    @endcan
                                                 </td>
 
 
